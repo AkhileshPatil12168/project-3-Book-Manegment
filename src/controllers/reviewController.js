@@ -1,6 +1,5 @@
 const bookModel = require("../models/bookModel");
 const reviewModel = require("../models/reviewModel");
-const userModels = require("../models/userModels");
 const validator = require("../utils/validators");
 const moment = require("moment");
 
@@ -53,10 +52,12 @@ const createReview = async function (req, res) {
     }
     data.bookId = bookId;
     let reviewData = await reviewModel.create(data);
-    const updatedBook = await bookModel.findByIdAndUpdate(
+
+    await bookModel.findByIdAndUpdate(
       { _id: book1._id },
       { $inc: { reviews: +1 } }
     );
+    
     let savedData = await reviewModel
       .findOne({ _id: reviewData._id, bookId: bookId })
       .populate("bookId");
@@ -178,12 +179,9 @@ const deleteReviewById = async function (req, res) {
         .send({ status: false, message: "review not found" });
     }
 
-    const deleteReview = await reviewModel.findOneAndUpdate(
-      { _id: reviewId },
-      { isDeleted: true }
-    );
+    await reviewModel.findOneAndUpdate({ _id: reviewId }, { isDeleted: true });
 
-    const updatedBook = await bookModel.findByIdAndUpdate(
+    await bookModel.findByIdAndUpdate(
       { _id: book._id },
       { $inc: { reviews: -1 } }
     );

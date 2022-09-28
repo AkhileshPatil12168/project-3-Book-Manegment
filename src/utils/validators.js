@@ -53,14 +53,6 @@ const isValidObjectId = function (objectId) {
   return mongoose.isValidObjectId(objectId);
 };
 
-const isStringsArray = function (arr) {
-  if (!Array.isArray(arr)) return false;
-  for (let i = 0; i < arr.length; i++) {
-    if (typeof arr[i] !== "string" || arr[i].trim().length === 0) return false;
-  }
-  return true;
-};
-
 module.exports = {
   isValid,
   isValidTitle,
@@ -68,7 +60,6 @@ module.exports = {
   isValidObjectId,
   isValidPassword,
   isValidEmail,
-  isStringsArray,
   isValidName,
   isValidMobile,
   isValidISBN,

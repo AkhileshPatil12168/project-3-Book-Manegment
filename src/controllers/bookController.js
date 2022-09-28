@@ -1,8 +1,6 @@
 const bookModel = require("../models/bookModel");
-const userModel = require("../models/userModels");
 const reviewModel = require("../models/reviewModel");
 const validator = require("../utils/validators");
-const moment = require("moment");
 
 const createBook = async function (req, res) {
   try {
@@ -15,16 +13,9 @@ const createBook = async function (req, res) {
     }
     let decodedToken = req["x-api-key"];
     //Extract params
-    const {
-      title,
-      excerpt,
-      userId,
-      ISBN,
-      category,
-      subcategory,
-      releasedAt,
-      isDeleted,
-    } = requestBody;
+    const { title, excerpt, userId, ISBN, category, subcategory, releasedAt } =
+      requestBody;
+
     if (userId) {
       if (!validator.isValidObjectId(userId)) {
         return res
@@ -125,6 +116,7 @@ const getBooks = async function (req, res) {
       }
     }
     if (category) query.category = category.trim();
+
     if (subcategory) query.subcategory = subcategory.trim();
     query.isDeleted = false;
     let totalBooks = await bookModel
@@ -159,6 +151,7 @@ const getBooks = async function (req, res) {
           __v: 0,
         })
         .sort({ title: 1 });
+
       if (finalFilter.length > 0) {
         return res
           .status(200)
@@ -173,6 +166,7 @@ const getBooks = async function (req, res) {
     return res.status(500).send({ status: false, message: error.message });
   }
 };
+
 const getBookById = async function (req, res) {
   try {
     let id = req.params.bookId;
@@ -283,7 +277,7 @@ const deleteBookById = async function (req, res) {
     let Book = await bookModel.findById(id);
 
     if (Book.isDeleted == false) {
-      let Update = await bookModel.findOneAndUpdate(
+      await bookModel.findOneAndUpdate(
         { _id: id },
         { isDeleted: true, deletedAt: Date() },
         { new: true }

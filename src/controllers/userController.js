@@ -46,11 +46,14 @@ const createUser = async function (req, res) {
     }
 
     if (!validator.isValidEmail(email))
-      return res.status(400).send({
-        status: false,
-        message: "Email is requried,Please provide valid email.",
-      });
-    data.email = email.toString().trim();
+      return res
+        .status(400)
+        .send({
+          status: false,
+          message: "Email is requried,Please provide valid email.",
+        });
+
+    data.email = email.trim();
     const validemail = await userModel.findOne({ email: data.email });
     if (validemail) {
       return res
@@ -59,11 +62,13 @@ const createUser = async function (req, res) {
     }
 
     if (!validator.isValidPassword(password))
-      return res.status(400).send({
-        status: false,
-        message:
-          "Password is required, Please enter At least one upper case,  one lower case English letter, one digit,  one special character and minimum eight in length",
-      });
+      return res
+        .status(400)
+        .send({
+          status: false,
+          message:
+            "Password is required, Please enter At least one upper case,  one lower case English letter, one digit,  one special character and minimum eight in length",
+        });
     data.password = password.trim();
 
     if (address) {
@@ -73,16 +78,20 @@ const createUser = async function (req, res) {
           .status(400)
           .send({ status: false, message: "Please provide valid street" });
       }
+
       if (!validator.isValid(city)) {
         return res
+
           .status(400)
           .send({ status: false, message: "Please provide valid city" });
       }
+
       if (!validator.isValid(pincode) || pincode.length !== 6) {
         return res
           .status(400)
           .send({ status: false, message: "Please provide valid pincode" });
       }
+
       data.address.street = address["street"].trim();
       data.address.city = address["city"].trim();
       data.address.pincode = address["pincode"].toString().trim();
@@ -100,26 +109,32 @@ const userLogin = async function (req, res) {
   try {
     const requestBody = req.body;
     if (!validator.isValidRequestBody(requestBody)) {
-      return res.status(400).send({
-        status: false,
-        message: "Invalid request parameters. Please provide login details",
-      });
+      return res
+        .status(400)
+        .send({
+          status: false,
+          message: "Invalid request parameters. Please provide login details",
+        });
     }
+
     //Extract from params
     let { email, password } = requestBody;
     if (!validator.isValidEmail(email)) {
-      return res.status(400).send({
-        status: false,
-        message: `Email is mandatory and provide valid email address`,
-      });
-      return;
+      return res
+        .status(400)
+        .send({
+          status: false,
+          message: `Email is mandatory and provide valid email address`,
+        });
     }
+
     if (!validator.isValidPassword(password)) {
       return res.status(400).send({
         status: false,
         message: `Password is required, Please enter At least one upper case,  one lower case English letter, one digit,  one special character and minimum eight in length`,
       });
     }
+
     let validuserId = await userModel.findOne(requestBody).select({ _id: 1 });
     if (!validuserId) {
       return res
@@ -135,17 +150,16 @@ const userLogin = async function (req, res) {
       },
       "secretkey"
     );
-    return res.status(200).send({
-      status: true,
-      message: "User login successfully",
-      data: { token: token },
-    });
+    return res
+      .status(200)
+      .send({
+        status: true,
+        message: "User login successfully",
+        data: { token: token },
+      });
   } catch (error) {
     return res.status(500).send({ status: false, Error: error.message });
   }
 };
 
-module.exports = {
-  userLogin,
-  createUser,
-};
+module.exports = { userLogin, createUser };
